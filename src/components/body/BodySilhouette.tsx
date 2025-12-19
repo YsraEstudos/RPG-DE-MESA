@@ -45,7 +45,11 @@ const BodyPartGroup = ({
     `
 
     // Animation variants for status
+<<<<<<< HEAD
     const pulseVariant = {
+=======
+    const pulseVariant: any = {
+>>>>>>> master
         animate: status.health < 30 && !isSelected ? {
             fillOpacity: [0.6, 1, 0.6],
             strokeWidth: [2, 3, 2],
