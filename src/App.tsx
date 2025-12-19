@@ -5,6 +5,7 @@ import { Settings, PanelLeftClose, PanelLeftOpen, Move, X } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { DynamicIsland } from './components/DynamicIsland'
 import { useState, lazy, Suspense, useMemo } from 'react'
+import { QuestBoardWidget } from './components/QuestBoard/QuestBoardWidget'
 
 // Page imports
 import { useShallow } from 'zustand/react/shallow'
@@ -43,8 +44,7 @@ function App() {
     activePageId,
     setActivePage,
     showSidebar,
-    toggleSidebar,
-    userPrefersSidebarHidden
+    toggleSidebar
   } = useLayoutStore(
     useShallow((state) => ({
       buttons: state.buttons,
@@ -265,6 +265,9 @@ function App() {
           Modo de Edição
         </div>
       )}
+
+      {/* Quest Board Widget */}
+      <QuestBoardWidget />
     </div>
   )
 }
