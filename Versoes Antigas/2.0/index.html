@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPG Zumbi - Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        zombie: {
+                            red: '#8B0000',
+                            green: '#3D5C32',
+                            gray: '#1E1E1E',
+                            black: '#101010',
+                        }
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'blood-drip': 'blood-drip 8s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        'blood-drip': {
+                            '0%': { transform: 'translateY(-10px)', opacity: 0 },
+                            '50%': { opacity: 1 },
+                            '100%': { transform: 'translateY(30px)', opacity: 0 },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Special+Elite&display=swap');
+
+        body {
+            background-color: #101010;
+            background-image:
+                radial-gradient(circle at 50% 50%, rgba(139, 0, 0, 0.15) 0%, transparent 80%),
+                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23320000' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .title-font {
+            font-family: 'Creepster', cursive;
+        }
+
+        .content-font {
+            font-family: 'Special Elite', cursive;
+        }
+
+        .blood-drip:before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 8px;
+            height: 20px;
+            background-color: #8B0000;
+            border-radius: 50%;
+            opacity: 0;
+            animation: blood-drip 10s ease-in-out infinite;
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 10px 25px -5px rgba(139, 0, 0, 0.6);
+        }
+
+        /* Blood splatter effect on page */
+        .blood-splatter {
+            pointer-events: none;
+            position: absolute;
+            background-size: contain;
+            background-repeat: no-repeat;
+            opacity: 0.7;
+            z-index: -1;
+        }
+
+        .blood-1 {
+            width: 150px;
+            height: 150px;
+            top: 15%;
+            left: 5%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='%238B0000' d='M65.479,16.279c-7.547,3.145-10.334,4.127-4,14c6.334,9.873,10,16,2,18c-8,2-10-16-25-13c-7.5,1.5-6.5,11.5,1,17.5c8.5,6.818,13.5,18.045,6,20.5c-8,2.618-11.5-9-21-5c-6,3,2.334,11.334,6,15c4,4,10,8,21,1c12-7,20-1,22,2c1.666,2.501,11,9-2,12c-13,3-12,15,1,12c13-3,17-10,25-5c5.334,3.334,14.334,12.667,24,0c6.667-8.667-3.667-24.333-12-28c-6.667-2.934-10.333,7.333-4,11c6.333,3.667,0.333,14.667-9,11c-9.333-3.667-9-11.667-4-16c5-4.333,18.334-2.333,18-11c-0.334-8.667-18.666-16.667-29-11c-6,3.279-5,10-1,13c4,3,6,12-1,11c-5.6-0.8-0.334-9.334,4-14c4.334-4.666,3.667-11.333-2-15c-5.667-3.667-8.333-1.668-10,0c-3,3-6,4-6-0.5c0-4.5,8-9,12-9c5,0,10,3,10-3c0-5-7-8-14-4C67.479,11.779,67.813,15.279,65.479,16.279z'/%3E%3C/svg%3E");
+            transform: rotate(45deg);
+        }
+
+        .blood-2 {
+            width: 120px;
+            height: 120px;
+            bottom: 15%;
+            right: 10%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='%238B0000' d='M50,16.4c-4.9,0-8.9,6.9-8.9,15.5c0,2.6,0.5,4.9,1.4,6.9c-6.4,1.5-11.1,7.2-11.1,13.9c0,7.9,6.4,14.4,14.4,14.4c3,0,5.8-0.9,8.2-2.5c2.3,1.6,5.1,2.5,8.2,2.5c8,0,14.4-6.4,14.4-14.4c0-6.7-4.6-12.3-10.9-13.9c0.8-2,1.3-4.3,1.3-6.9C66.9,23.3,62.9,16.4,58,16.4c-2.5,0-4.7,1.8-6.3,4.5C50.2,18.2,48,16.4,50,16.4z'/%3E%3C/svg%3E");
+            transform: rotate(-20deg);
+        }
+
+        .blood-3 {
+            width: 100px;
+            height: 100px;
+            top: 60%;
+            left: 15%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle fill='%238B0000' cx='50' cy='50' r='25' /%3E%3C/svg%3E");
+        }
+
+        /* Custom zombified scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1E1E1E;
+            border: 1px solid #3D5C32;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #8B0000;
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #650000;
+        }
+
+        /* Floating eye animation */
+        @keyframes float-eye {
+            0%, 100% { transform: translate(0, 0); }
+            25% { transform: translate(5px, 5px); }
+            50% { transform: translate(0, 10px); }
+            75% { transform: translate(-5px, 5px); }
+        }
+
+        .floating-eye {
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background-color: #fff;
+            animation: float-eye 8s ease-in-out infinite;
+        }
+
+        .floating-eye::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #101010;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col dark">
+    <!-- Blood splatters - decorative elements -->
+    <div class="blood-splatter blood-1"></div>
+    <div class="blood-splatter blood-2"></div>
+    <div class="blood-splatter blood-3"></div>
+
+    <div class="container mx-auto px-4 py-8 flex-grow">
+        <header class="mb-8 text-center">
+            <h1 class="title-font text-zombie-red text-6xl md:text-7xl mb-4 animate-pulse-slow relative">
+                Ficha RPG Zumbi
+                <div class="floating-eye absolute top-0 right-[25%]"></div>
+            </h1>
+            <p class="content-font text-gray-400 text-xl md:text-2xl">Escolha uma seção para visualizar</p>
+        </header>
+
+        <div class="flex flex-col md:flex-row gap-6 mb-12 items-center">
+            <!-- Main image -->
+            <div class="w-full md:w-1/2 flex justify-center">
+                <div class="relative rounded-lg overflow-hidden border-4 border-zombie-red shadow-2xl animate-float">
+                    <img src="https://imgur.com/a5VCrTS.jpg" alt="Zombie RPG" class="w-full h-auto max-w-lg object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+                </div>
+            </div>
+
+            <!-- Welcome message -->
+            <div class="w-full md:w-1/2 bg-zombie-gray bg-opacity-80 p-6 rounded-lg border-2 border-zombie-green">
+                <h2 class="title-font text-zombie-green text-3xl mb-4">Bem-vindo, Sobrevivente!</h2>
+                <p class="content-font text-gray-300 mb-4">Este é o portal para acessar todas as informações da sua ficha de RPG de zumbi. Escolha uma das seções abaixo para continuar sua jornada na terra dos mortos.</p>
+                <p class="content-font text-zombie-red text-lg">Tenha cuidado... eles estão por toda parte!</p>
+            </div>
+        </div>
+
+        <!-- Section links -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Information Card -->
+            <a href="Páginas/Informações.html" class="card-hover group relative bg-zombie-gray bg-opacity-80 rounded-lg p-6 border-2 border-zombie-green">
+                <div class="blood-drip absolute top-0 left-1/2"></div>
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 flex items-center justify-center bg-zombie-red rounded-full mr-4 group-hover:bg-red-900 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <h3 class="title-font text-2xl text-zombie-red">Informações</h3>
+                </div>
+                <p class="content-font text-gray-400">Dados básicos do seu personagem, histórico e estatísticas de sobrevivência.</p>
+            </a>
+
+            <!-- Attributes Card -->
+            <a href="Páginas/Atributos.html" class="card-hover group relative bg-zombie-gray bg-opacity-80 rounded-lg p-6 border-2 border-zombie-green">
+                <div class="blood-drip absolute top-0 left-1/2"></div>
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 flex items-center justify-center bg-zombie-red rounded-full mr-4 group-hover:bg-red-900 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                    </div>
+                    <h3 class="title-font text-2xl text-zombie-red">Atributos</h3>
+                </div>
+                <p class="content-font text-gray-400">Força, agilidade, resistência e outras habilidades do seu sobrevivente.</p>
+            </a>
+
+            <!-- Weapons Card -->
+            <a href="Páginas/Armas.html" class="card-hover group relative bg-zombie-gray bg-opacity-80 rounded-lg p-6 border-2 border-zombie-green">
+                <div class="blood-drip absolute top-0 left-1/2"></div>
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 flex items-center justify-center bg-zombie-red rounded-full mr-4 group-hover:bg-red-900 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                        </svg>
+                    </div>
+                    <h3 class="title-font text-2xl text-zombie-red">Armas</h3>
+                </div>
+                <p class="content-font text-gray-400">Arsenal disponível para combater os mortos-vivos e outros perigos.</p>
+            </a>
+
+            <!-- Inventory Card -->
+            <a href="Páginas/Inventário.html" class="card-hover group relative bg-zombie-gray bg-opacity-80 rounded-lg p-6 border-2 border-zombie-green">
+                <div class="blood-drip absolute top-0 left-1/2"></div>
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 flex items-center justify-center bg-zombie-red rounded-full mr-4 group-hover:bg-red-900 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                        </svg>
+                    </div>
+                    <h3 class="title-font text-2xl text-zombie-red">Inventário</h3>
+                </div>
+                <p class="content-font text-gray-400">Itens, suprimentos, recursos coletados e detalhes do seu veículo.</p>
+            </a>
+
+            <!-- Health Card -->
+            <a href="Páginas/Carro.html" class="card-hover group relative bg-zombie-gray bg-opacity-80 rounded-lg p-6 border-2 border-zombie-green">
+                <div class="blood-drip absolute top-0 left-1/2"></div>
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 flex items-center justify-center bg-zombie-red rounded-full mr-4 group-hover:bg-red-900 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 9l3 3m0 0l-3 3m3-3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <h3 class="title-font text-2xl text-zombie-red">Saúde</h3>
+                </div>
+                <p class="content-font text-gray-400">Detalhes sobre a condição física do seu personagem.</p>
+            </a>
+
+            <!-- Notes Card -->
+            <a href="Páginas/Anotações.html" class="card-hover group relative bg-zombie-gray bg-opacity-80 rounded-lg p-6 border-2 border-zombie-green">
+                <div class="blood-drip absolute top-0 left-1/2"></div>
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 flex items-center justify-center bg-zombie-red rounded-full mr-4 group-hover:bg-red-900 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                    </div>
+                    <h3 class="title-font text-2xl text-zombie-red">Anotações</h3>
+                </div>
+                <p class="content-font text-gray-400">Registro de missões, encontros, pistas e informações importantes.</p>
+            </a>
+        </div>
+    </div>
+
+    <footer class="py-6 text-center text-gray-500 content-font">
+        <p>Survivor's Log — Mantenha-se vivo, mantenha-se humano</p>
+    </footer>
+
+    <!-- Zombie-themed cursor effects and ambient sounds -->
+    <script>
+        // Check for dark mode preference
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (event.matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
+
+        // Add random blood drips animation timing
+        document.querySelectorAll('.blood-drip').forEach(drip => {
+            const delay = Math.random() * 8;
+            drip.style.animationDelay = `${delay}s`;
+        });
+
+        // Add floating eye movement that follows cursor within limits
+        const eye = document.querySelector('.floating-eye');
+        document.addEventListener('mousemove', (e) => {
+            const mouseX = e.clientX;
+            const mouseY = e.clientY;
+
+            // Get eye position
+            const eyeRect = eye.getBoundingClientRect();
+            const eyeX = eyeRect.left + eyeRect.width / 2;
+            const eyeY = eyeRect.top + eyeRect.height / 2;
+
+            // Calculate direction vector
+            const deltaX = mouseX - eyeX;
+            const deltaY = mouseY - eyeY;
+
+            // Limit the eye movement to 5px in any direction
+            const maxMove = 5;
+            const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+            const normalizedDeltaX = deltaX / distance;
+            const normalizedDeltaY = deltaY / distance;
+
+            const moveX = normalizedDeltaX * Math.min(distance, maxMove);
+            const moveY = normalizedDeltaY * Math.min(distance, maxMove);
+
+            // Apply the movement
+            eye.style.transform = `translate(${moveX}px, ${moveY}px)`;
+        });
+
+        // Add hover effect for cards
+        document.querySelectorAll('.card-hover').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                // Play subtle hover effect
+                card.style.transform = 'translateY(-5px) scale(1.03)';
+                card.style.boxShadow = '0 10px 25px -5px rgba(139, 0, 0, 0.6)';
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = '';
+                card.style.boxShadow = '';
+            });
+        });
+    </script>
+</body>
+</html>
