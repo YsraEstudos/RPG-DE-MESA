@@ -4,7 +4,13 @@
   X-XSS-Protection: 1; mode=block
   Referrer-Policy: strict-origin-when-cross-origin
 
+/assets/*.js
+  Content-Type: application/javascript; charset=utf-8
+
 /*.js
+  Content-Type: application/javascript; charset=utf-8
+
+/assets/*.mjs
   Content-Type: application/javascript; charset=utf-8
 
 /*.mjs
