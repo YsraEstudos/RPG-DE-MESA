@@ -1,5 +1,22 @@
 # React + TypeScript + Vite
 
+## Deploy (Cloudflare Pages) — correção do erro 404/MIME
+
+Se o site publicado estiver tentando carregar `/src/main.tsx`, o Cloudflare Pages está servindo o **source** (raiz do repo) em vez do **build** do Vite (`dist`). Isso causa:
+- `Failed to load resource: 404`
+- `Failed to load module script... MIME type "application/octet-stream"`
+
+Configuração correta no Cloudflare Pages (Project Settings → Builds & deployments):
+- **Build command**: `npm run build`
+- **Build output directory**: `dist`
+- **Root directory**: `/`
+
+Validação rápida (produção):
+- Abra o site → View Source → confirme que o HTML aponta para `/assets/*.js`.
+- Se aparecer `<script type="module" src="/src/main.tsx">`, o Pages está mal configurado.
+
+Este repositório inclui `wrangler.toml` com `pages_build_output_dir = "dist"` para padronizar deploy via Wrangler.
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:

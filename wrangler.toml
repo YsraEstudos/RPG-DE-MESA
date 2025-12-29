@@ -1,0 +1,5 @@
+name = "rpg-de-mesa"
+compatibility_date = "2025-12-29"
+
+# Ensures Cloudflare Pages serves the Vite build output, not the repo root.
+pages_build_output_dir = "dist"
