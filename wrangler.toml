@@ -1,9 +1,8 @@
 name = "rpg-de-mesa"
 compatibility_date = "2025-12-29"
 
-# Ensures Cloudflare Pages serves the Vite build output, not the repo root.
+# Cloudflare Pages configuration
 pages_build_output_dir = "dist"
 
-# Required for Cloudflare Pages Git deployments; otherwise Pages may skip the build
-# step and fail with "Output directory 'dist' not found".
-pages_build_command = "npm run build"
+[build]
+command = "npm run build"
